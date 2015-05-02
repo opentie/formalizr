@@ -1,26 +1,25 @@
 require "formalizr/version"
 
 module Formalizr
-  # Your code goes here...
-  class Validator
-    attr_reader :condition, :description
-
-    def initialize(condition, description)
-      @condition = condition
-      @description = description
-    end
-
-    def valid? (input)
-      return false unless String === input
-      return validate(input)
-    end
-
-    def validate(input)
-      raise NotImplementedError
-    end
-  end
-
   module Validators
+    class Validator
+      attr_reader :condition, :description
+
+      def initialize(condition, description)
+        @condition = condition
+        @description = description
+      end
+
+      def valid? (input)
+        return false unless String === input
+        return validate(input)
+      end
+
+      def validate(input)
+        raise NotImplementedError
+      end
+    end
+
     class Pattern < Validator
       def validate(input)
         return true if input.length.zero?

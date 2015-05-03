@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Formalizr::Validators
+module Formalizr
   describe Formalizr do
     it 'has a version number' do
       expect(Formalizr::VERSION).not_to be nil
@@ -10,117 +10,105 @@ module Formalizr::Validators
       expect(false).to eq(false)
     end
 
-    describe Formalizr::Validators do
-      describe Pattern do
-        subject do
-          Pattern.new('^[a-z]+$', 'contains lower alphabet only')
-        end
-
-        it 'returns true when matched' do
-          expect(subject.valid?('matched')).to eq(true)
-        end
-        
-        it 'returns false when not matched' do
-          expect(subject.valid?('not-matched')).to eq(false)
-        end
-
-        it 'returns true when empty' do
-          expect(subject.valid?('')).to eq(true)
-        end
+    describe FormSchema do
+      subject do
+        FormSchema.new([{
+          'name'  => 'text',
+          'type'  => 'text',
+          'title' => '書く',
+          'note'  => '書ける',
+          'validators' => [
+            { 'type' => 'maxlength', 'condition' => '4', 'description' => 'hoge' },
+            { 'type' => 'minlength', 'condition' => '3', 'description' => 'foo' },
+          ]
+        }, {
+          'name' => 'table',
+          'type' => 'table',
+          'title' => '表',
+          'note' => 'note',
+          'columns' => [
+            {
+              'name'  => 'text',
+              'type'  => 'text',
+              'title' => '書く',
+              'note'  => '書ける',
+              'validators' => [
+                { 'type' => 'maxlength', 'condition' => '4', 'description' => 'hoge' },
+                { 'type' => 'minlength', 'condition' => '3', 'description' => 'foo' },
+              ]
+            }
+          ]
+        }])
       end
 
-      describe Minlength do
-        subject do
-          Minlength.new('5', 'minlength is 5')
+      describe '#validate' do
+        it 'validate' do
+          expect(
+            subject.validate({
+              'text' => 'hogefoobar',
+              'table' => [
+                { 'text' => 'foo' }
+              ]
+            })
+          ).to eq({
+            'text' => {
+              'validities' => [
+                { 'validity' => false, 'description' => 'hoge' },
+                { 'validity' => true, 'description' => 'foo' },
+              ]
+            },
+            'table' => {
+              'validities' => [],
+              'children' => [
+                {
+                  'text' => {
+                    'validities' => [
+                      { 'validity' => true, 'description' => 'hoge' },
+                      { 'validity' => true, 'description' => 'foo' },
+                    ]
+                  }
+                }
+              ]
+            }
+          })
         end
 
-        it 'returns true when matched' do
-          expect(subject.valid?('matched')).to eq(true)
-        end
-
-        it 'returns false when not matched' do
-          expect(subject.valid?('not')).to eq(false)
-        end
-
-        it 'returns true when empty' do
-          expect(subject.valid?('')).to eq(true)
+        it 'returns true as validity if input is empty' do
+          expect(
+            subject.validate({ 'text' => '' })
+          ).to eq({
+            'text' => {
+              'validities' => [
+                { 'validity' => true, 'description' => 'hoge' },
+                { 'validity' => true, 'description' => 'foo' },
+              ]
+            },
+            'table' => {
+              'validities' => [],
+              'children' => []
+            }
+          })
         end
       end
+    end
 
-      describe Maxlength do
+    describe InputSchema do
+      describe '.load' do
         subject do
-          Maxlength.new('10', 'maxlength is 10')
+          InputSchema.load({
+            'name'  => 'text',
+            'type'  => 'text',
+            'title' => '書く',
+            'note'  => '書ける',
+            'validators' => [
+              { 'type' => 'maxlength', 'condition' => '4', 'description' => 'hoge' },
+              { 'type' => 'minlength', 'condition' => '3', 'description' => 'foo' },
+            ]
+          })
         end
 
-        it 'returns true when matched' do
-          expect(subject.valid?('matched')).to eq(true)
-        end
-
-        it 'returns false when not matched' do
-          expect(subject.valid?('not-matched')).to eq(false)
-        end
-
-        it 'returns true when empty' do
-          expect(subject.valid?('')).to eq(true)
-        end        
-      end
-
-      describe Min do
-        subject do
-          Min.new('10', 'minimum value is 10')
-        end
-
-        it 'returns true when matched' do
-          expect(subject.valid?('10')).to eq(true)
-          expect(subject.valid?('11')).to eq(true)
-        end
-
-        it 'returns false when not matched' do
-          expect(subject.valid?('not-a-integer')).to eq(false)
-          expect(subject.valid?('9')).to eq(false)
-          expect(subject.valid?('5')).to eq(false)
-        end
-
-        it 'returns true when empty' do
-          expect(subject.valid?('')).to eq(true)
-        end        
-      end
-
-      describe Max do
-        subject do
-          Max.new('10', 'maximum value is 10')
-        end
-
-        it 'returns true when matched' do
-          expect(subject.valid?('10')).to eq(true)
-          expect(subject.valid?('9')).to eq(true)
-          expect(subject.valid?('-10')).to eq(true)
-        end
-
-        it 'returns false when not matched' do
-          expect(subject.valid?('not-a-integer')).to eq(false)
-          expect(subject.valid?('11')).to eq(false)
-          expect(subject.valid?('100')).to eq(false)
-        end
-
-        it 'returns true when empty' do
-          expect(subject.valid?('')).to eq(true)
-        end        
-      end
-
-      describe Required do
-        subject do
-          Required.new(nil, 'required')
-        end
-
-        it 'returns true when not empty' do
-          expect(subject.valid?(' ')).to eq(true)
-          expect(subject.valid?('a')).to eq(true)
-          expect(subject.valid?('The quick brown fox jumps over the lazy dog')).to eq(true)
-        end
-
-        it 'returns false when empty' do
-          expect(subject.valid?('')).to eq(false)
+        it 'loads definition' do
+          expect(subject).to be_a(TextInputSchema)
         end
       end
     end

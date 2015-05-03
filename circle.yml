@@ -1,6 +1,6 @@
 dependencies:
   pre:
     - gem install bundler --pre
-  test:
-    override:
-      - bundle exec rspec
+test:
+  override:
+    - bundle exec rspec

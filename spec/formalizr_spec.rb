@@ -26,6 +26,10 @@ module Formalizr
           'type' => 'table',
           'title' => '表',
           'note' => 'note',
+          'validators' => [
+            { 'type' => 'required', 'description' => 'bar' },
+            { 'type' => 'maxrows', 'condition' => '2', 'description' => 'baz' },
+          ],
           'columns' => [
             {
               'name'  => 'text',
@@ -33,6 +37,7 @@ module Formalizr
               'title' => '書く',
               'note'  => '書ける',
               'validators' => [
+                { 'type' => 'required', 'description' => 'bar' },
                 { 'type' => 'maxlength', 'condition' => '4', 'description' => 'hoge' },
                 { 'type' => 'minlength', 'condition' => '3', 'description' => 'foo' },
               ]
@@ -47,10 +52,12 @@ module Formalizr
             subject.validate({
               'text' => 'hogefoobar',
               'table' => [
-                { 'text' => 'foo' }
+                { 'text' => 'foo' },
+                { 'text' => 'bar' },
+                { 'text' => 'baz' }
               ]
             })
-          ).to eq({
+          ).to match({
             'text' => {
               'validities' => [
                 { 'validity' => false, 'description' => 'hoge' },
@@ -58,11 +65,33 @@ module Formalizr
               ]
             },
             'table' => {
-              'validities' => [],
+              'validities' => [
+                {'validity' => true, 'description' => 'bar'},
+                {'validity' => false, 'description' => 'baz'}
+              ],
               'children' => [
                 {
                   'text' => {
                     'validities' => [
+                      {'validity' => true, 'description' => 'bar'},
+                      { 'validity' => true, 'description' => 'hoge' },
+                      { 'validity' => true, 'description' => 'foo' },
+                    ]
+                  }
+                },
+                {
+                  'text' => {
+                    'validities' => [
+                      {'validity' => true, 'description' => 'bar'},
+                      { 'validity' => true, 'description' => 'hoge' },
+                      { 'validity' => true, 'description' => 'foo' },
+                    ]
+                  }
+                },
+                {
+                  'text' => {
+                    'validities' => [
+                      {'validity' => true, 'description' => 'bar'},
                       { 'validity' => true, 'description' => 'hoge' },
                       { 'validity' => true, 'description' => 'foo' },
                     ]
@@ -76,7 +105,7 @@ module Formalizr
         it 'returns true as validity if input is empty' do
           expect(
             subject.validate({ 'text' => '' })
-          ).to eq({
+          ).to match({
             'text' => {
               'validities' => [
                 { 'validity' => true, 'description' => 'hoge' },
@@ -84,7 +113,10 @@ module Formalizr
               ]
             },
             'table' => {
-              'validities' => [],
+              'validities' => [
+                {'validity' => false, 'description'=>'bar'},
+                {'validity' => true , 'description'=>'baz'}
+              ],
               'children' => []
             }
           })

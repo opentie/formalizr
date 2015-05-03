@@ -15,7 +15,7 @@ module Formalizr
       @default_value = definition['defaultValue'] || ''
       # FIXME:
       @validators = (definition['validators'] || []).map do |validation|
-        Validators::Validator.load(validation)
+        load_validation(validation)
       end
     end
 
@@ -35,24 +35,32 @@ module Formalizr
   end
 
   class TextInputSchema < InputSchema
+    include StringValidators
   end
 
   class NumberInputSchema < InputSchema
+    include IntegerValidators
   end
 
   class ParagraphInputSchema < InputSchema
+    include StringValidators
   end
 
   class MultiCheckInputSchema < InputSchema
+    include SetValidators
   end
 
   class RadioInputSchema < InputSchema
+    include StringValidators
   end
 
   class SelectInputSchema < InputSchema
+    include Validators
   end
 
   class TableInputSchema < InputSchema
+    include TableValidators
+
     def initialize(definition)
       super(definition)
       @default_value = definition['defaultValue'] || []
@@ -73,12 +81,15 @@ module Formalizr
   end
 
   class TableTextInput < TableCellInputSchema
+    include StringValidators
   end
 
   class TableNumberInputSchema < TableCellInputSchema
+    include IntegerValidators
   end
 
   class TableSelectInput < TableCellInputSchema
+    include Validators
   end
 
   class FormSchema

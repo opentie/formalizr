@@ -4,6 +4,8 @@ require "formalizr/validators"
 require "pry"
 
 module Formalizr
+  class InvalidInput < StandardError ; end
+
   class InputSchema
     attr_reader :name, :type, :title, :note
 
@@ -118,10 +120,28 @@ module Formalizr
       }.to_h
     end
 
+    def valid?(input)
+      validities = validate(input)
+      _valid?(validities)
+    end
+
     def normalize(input)
-      @input_schemata.map{ |schema|
+      raise InvalidInput unless valid?(input)
+      normalized_fields = @input_schemata.map do |schema|
         schema.normalize(input[schema.name])
-      }.to_h
+      end
+      normalized_fields.to_h
+    end
+
+    private
+    def _valid?(validities)
+      return true if validities.nil?
+      validities.all? do |key, field|
+        local_validity = field['validities'].all?{ |rule| rule['validity'] }
+        children_validity = field['children'].nil?
+        children_validity ||= field['children'].all?{ |child| _valid?(child) }
+        local_validity && children_validity
+      end
     end
   end
 end

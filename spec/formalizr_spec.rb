@@ -125,23 +125,18 @@ module Formalizr
 
       describe '#normalize' do
         it 'normalize' do
-          expect(subject.normalize({})).to match({
-            'text' => '',
-            'table' => [],
-          })
-
           expect(
             subject.normalize({
               'text' => 'foo',
               'table' => [
-                {},
-                { 'text'=>'hoge' },
+                { 'text' => 'foo' },
+                { 'text' => 'hoge' },
               ],
             })
           ).to match({
             'text' => 'foo',
             'table' => [
-              { 'text' => '' },
+              { 'text' => 'foo' },
               { 'text' => 'hoge' },
             ],
           })

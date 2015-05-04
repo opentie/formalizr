@@ -1,6 +1,7 @@
 require "active_support/inflector"
 require "formalizr/version"
 require "formalizr/validators"
+require "formalizr/querier"
 require "pry"
 
 module Formalizr

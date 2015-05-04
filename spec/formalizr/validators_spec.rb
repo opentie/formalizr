@@ -10,7 +10,7 @@ module Formalizr::StringValidators
       it 'returns true when matched' do
         expect(subject.valid?('matched')).to eq(true)
       end
-      
+
       it 'returns false when not matched' do
         expect(subject.valid?('not-matched')).to eq(false)
       end
@@ -102,7 +102,7 @@ module Formalizr::IntegerValidators
         expect(subject.valid?('')).to eq(true)
       end
     end
-    
+
   end
 end
 

@@ -142,7 +142,7 @@ module Formalizr
           })
         end
       end
-    end    
+    end
 
     describe InputSchema do
       describe '.load' do

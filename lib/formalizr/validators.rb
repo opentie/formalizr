@@ -8,7 +8,7 @@ module Formalizr
       end
       validator.new(validation['condition'], validation['description'])
     end
-    
+
     class ValidatorBase
       attr_reader :condition, :description
 
@@ -28,7 +28,7 @@ module Formalizr
           'description' => description,
         }
       end
-      
+
       private
       def run(input)
         raise NotImplementedError
@@ -79,9 +79,9 @@ module Formalizr
         true
       rescue
         false
-      end      
+      end
     end
-    
+
     class Min < ValidatorBase
       private
       def run(input)
@@ -102,7 +102,7 @@ module Formalizr
       end
     end
   end
-  
+
   module StringValidators
     include Validators
 

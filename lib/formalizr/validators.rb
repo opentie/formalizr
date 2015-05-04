@@ -3,6 +3,9 @@ module Formalizr
     def load_validation(validation)
       type = validation['type'].capitalize
       validator = self.class.const_get("#{type}")
+      if validation['description'].nil?
+        raise InvalidSchema, "validators requires description"
+      end
       validator.new(validation['condition'], validation['description'])
     end
     

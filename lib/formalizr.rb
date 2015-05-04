@@ -5,6 +5,7 @@ require "pry"
 
 module Formalizr
   class InvalidInput < StandardError ; end
+  class InvalidSchema < StandardError ; end
 
   class InputSchema
     attr_reader :name, :type, :title, :note
@@ -46,6 +47,22 @@ module Formalizr
 
   class NumberInputSchema < InputSchema
     include IntegerValidators
+
+    def initialize(definition)
+      super(definition)
+
+      has_number_validator = @validators.any? do |validator|
+        validator.is_a? Number
+      end
+
+      unless has_number_validator
+        raise InvalidSchema, "number type field requires number validator"
+      end
+    end
+
+    def normalize(input)
+      name, value = super(input)
+    end
   end
 
   class ParagraphInputSchema < InputSchema

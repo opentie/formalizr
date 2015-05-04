@@ -2,7 +2,8 @@ require "active_support/concern"
 
 module Formalizr
   module Querier
-    def query(thunk)
+    def query(query_hash)
+      thunk = Query::Thunk.from_json(query_hash)
       thunk.evaluate(payload)
     end
   end

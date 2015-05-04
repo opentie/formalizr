@@ -32,6 +32,10 @@ module Formalizr
       end
       [name, { 'validities' => validities } ]
     end
+
+    def normalize(input)
+      [name, input || @default_value]
+    end
   end
 
   class TextInputSchema < InputSchema
@@ -75,6 +79,15 @@ module Formalizr
       end
       result
     end
+
+    def normalize(input)
+      key, shallow_normalized = super(input)
+      deep_normalized = shallow_normalized.map do |child|
+        @columns.map{ |col| col.normalize(child[col.name]) }.to_h
+      end
+
+      [key, deep_normalized]
+    end
   end
 
   class TableCellInputSchema < InputSchema
@@ -102,6 +115,12 @@ module Formalizr
     def validate(input)
       @input_schemata.map{ |schema|
         schema.validate(input[schema.name])
+      }.to_h
+    end
+
+    def normalize(input)
+      @input_schemata.map{ |schema|
+        schema.normalize(input[schema.name])
       }.to_h
     end
   end

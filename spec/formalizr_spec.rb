@@ -27,8 +27,8 @@ module Formalizr
           'title' => '表',
           'note' => 'note',
           'validators' => [
-            { 'type' => 'required', 'description' => 'bar' },
-            { 'type' => 'maxrows', 'condition' => '2', 'description' => 'baz' },
+            { 'type' => 'required',                     'description' => 'bar' },
+            { 'type' => 'maxrows' , 'condition' => '2', 'description' => 'baz' },
           ],
           'columns' => [
             {
@@ -37,7 +37,7 @@ module Formalizr
               'title' => '書く',
               'note'  => '書ける',
               'validators' => [
-                { 'type' => 'required', 'description' => 'bar' },
+                { 'type' => 'required' ,                     'description' => 'bar' },
                 { 'type' => 'maxlength', 'condition' => '4', 'description' => 'hoge' },
                 { 'type' => 'minlength', 'condition' => '3', 'description' => 'foo' },
               ]
@@ -61,19 +61,19 @@ module Formalizr
             'text' => {
               'validities' => [
                 { 'validity' => false, 'description' => 'hoge' },
-                { 'validity' => true, 'description' => 'foo' },
+                { 'validity' => true , 'description' => 'foo' },
               ]
             },
             'table' => {
               'validities' => [
-                {'validity' => true, 'description' => 'bar'},
-                {'validity' => false, 'description' => 'baz'}
+                { 'validity' => true , 'description' => 'bar' },
+                { 'validity' => false, 'description' => 'baz' }
               ],
               'children' => [
                 {
                   'text' => {
                     'validities' => [
-                      {'validity' => true, 'description' => 'bar'},
+                      { 'validity' => true, 'description' => 'bar'},
                       { 'validity' => true, 'description' => 'hoge' },
                       { 'validity' => true, 'description' => 'foo' },
                     ]
@@ -82,7 +82,7 @@ module Formalizr
                 {
                   'text' => {
                     'validities' => [
-                      {'validity' => true, 'description' => 'bar'},
+                      { 'validity' => true, 'description' => 'bar'},
                       { 'validity' => true, 'description' => 'hoge' },
                       { 'validity' => true, 'description' => 'foo' },
                     ]
@@ -91,7 +91,7 @@ module Formalizr
                 {
                   'text' => {
                     'validities' => [
-                      {'validity' => true, 'description' => 'bar'},
+                      { 'validity' => true, 'description' => 'bar'},
                       { 'validity' => true, 'description' => 'hoge' },
                       { 'validity' => true, 'description' => 'foo' },
                     ]
@@ -114,15 +114,40 @@ module Formalizr
             },
             'table' => {
               'validities' => [
-                {'validity' => false, 'description'=>'bar'},
-                {'validity' => true , 'description'=>'baz'}
+                { 'validity' => false, 'description'=>'bar' },
+                { 'validity' => true , 'description'=>'baz' }
               ],
               'children' => []
             }
           })
         end
       end
-    end
+
+      describe '#normalize' do
+        it 'normalize' do
+          expect(subject.normalize({})).to match({
+            'text' => '',
+            'table' => [],
+          })
+
+          expect(
+            subject.normalize({
+              'text' => 'foo',
+              'table' => [
+                {},
+                { 'text'=>'hoge' },
+              ],
+            })
+          ).to match({
+            'text' => 'foo',
+            'table' => [
+              { 'text' => '' },
+              { 'text' => 'hoge' },
+            ],
+          })
+        end
+      end
+    end    
 
     describe InputSchema do
       describe '.load' do

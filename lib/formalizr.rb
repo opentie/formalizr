@@ -62,6 +62,8 @@ module Formalizr
 
     def normalize(input)
       name, value = super(input)
+      value = Integer(value) if value.length > 0
+      [name, value]
     end
   end
 

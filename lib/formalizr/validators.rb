@@ -140,7 +140,7 @@ module Formalizr
       def run(input)
         return true if input.length.zero?
         schema.choices.any? do |choice|
-          (choice['value'] || choice['label']) == input
+          choice['value'] == input
         end
       end
     end

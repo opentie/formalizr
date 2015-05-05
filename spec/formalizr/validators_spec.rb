@@ -72,8 +72,9 @@ module Formalizr::ChoiceValidators
             'title' => 'Soleil',
             'note' => 'soleil rising',
             'choices' => [
+              { 'label' => 'please select' },
               { 'value' => 'ichigo' },
-              { 'label' => 'aoi' },
+              { 'value' => 'aoi' },
               { 'value' => 'ran' }
             ],
             'validators' => [
@@ -91,6 +92,7 @@ module Formalizr::ChoiceValidators
 
       it 'returns false when not matched' do
         expect(subject.valid?('akari')).to eq(false)
+        expect(subject.valid?('please select')).to eq(false)
       end
     end
   end

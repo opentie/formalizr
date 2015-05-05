@@ -4,7 +4,8 @@ module Formalizr::StringValidators
   describe Formalizr::StringValidators do
     describe Pattern do
       subject do
-        Pattern.new('^[a-z]+$', 'contains lower alphabet only')
+        # FIXME
+        Pattern.new(nil, '^[a-z]+$', 'contains lower alphabet only')
       end
 
       it 'returns true when matched' do
@@ -22,7 +23,8 @@ module Formalizr::StringValidators
 
     describe Minlength do
       subject do
-        Minlength.new('5', 'minlength is 5')
+        # FIXME
+        Minlength.new(nil, '5', 'minlength is 5')
       end
 
       it 'returns true when matched' do
@@ -40,7 +42,8 @@ module Formalizr::StringValidators
 
     describe Maxlength do
       subject do
-        Maxlength.new('10', 'maxlength is 10')
+        # FIXME
+        Maxlength.new(nil, '10', 'maxlength is 10')
       end
 
       it 'returns true when matched' do
@@ -58,11 +61,47 @@ module Formalizr::StringValidators
   end
 end
 
+module Formalizr::ChoiceValidators
+  describe Formalizr::ChoiceValidators do
+    describe Validchoice do
+      subject do
+        Validchoice.new(
+          Formalizr::InputSchema.load({
+            'name' => 'soleil',
+            'type' => 'select',
+            'title' => 'Soleil',
+            'note' => 'soleil rising',
+            'choices' => [
+              { 'value' => 'ichigo' },
+              { 'label' => 'aoi' },
+              { 'value' => 'ran' }
+            ],
+            'validators' => [
+              { 'type' => 'validchoice', 'description' => 'select one from soleil member' }
+            ]
+          }),
+          nil,
+          'value must exist in choices')
+      end
+
+      it 'returns true when matched' do
+        expect(subject.valid?('ichigo')).to eq(true)
+        expect(subject.valid?('aoi')).to eq(true)
+      end
+
+      it 'returns false when not matched' do
+        expect(subject.valid?('akari')).to eq(false)
+      end
+    end
+  end
+end
+
 module Formalizr::IntegerValidators
   describe Formalizr::IntegerValidators do
     describe Min do
       subject do
-        Min.new('10', 'minimum value is 10')
+        # FIXME
+        Min.new(nil, '10', 'minimum value is 10')
       end
 
       it 'returns true when matched' do
@@ -83,7 +122,8 @@ module Formalizr::IntegerValidators
 
     describe Max do
       subject do
-        Max.new('10', 'maximum value is 10')
+        # FIXME
+        Max.new(nil, '10', 'maximum value is 10')
       end
 
       it 'returns true when matched' do
@@ -110,7 +150,8 @@ module Formalizr::Validators
   describe Formalizr::Validators do
     describe Required do
       subject do
-        Required.new(nil, 'required')
+        # FIXME
+        Required.new(nil, nil, 'required')
       end
 
       it 'returns true when not empty' do

@@ -6,13 +6,14 @@ module Formalizr
       if validation['description'].nil?
         raise InvalidSchema, "validators requires description"
       end
-      validator.new(validation['condition'], validation['description'])
+      validator.new(self, validation['condition'], validation['description'])
     end
 
     class ValidatorBase
-      attr_reader :condition, :description
+      attr_reader :schema, :condition, :description
 
-      def initialize(condition, description)
+      def initialize(schema, condition, description)
+        @schema = schema
         @condition = condition
         @description = description
       end
@@ -127,6 +128,20 @@ module Formalizr
       def run(input)
         return true if input.length.zero?
         input.length <= condition.to_i
+      end
+    end
+  end
+
+  module ChoiceValidators
+    include Validators
+
+    class Validchoice < ValidatorBase
+      private
+      def run(input)
+        return true if input.length.zero?
+        schema.choices.any? do |choice|
+          (choice['value'] || choice['label']) == input
+        end
       end
     end
   end

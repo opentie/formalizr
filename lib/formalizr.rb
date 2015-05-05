@@ -2,7 +2,6 @@ require "active_support/inflector"
 require "formalizr/version"
 require "formalizr/validators"
 require "formalizr/querier"
-require "pry"
 
 module Formalizr
   class InvalidInput < StandardError ; end
@@ -81,7 +80,22 @@ module Formalizr
   end
 
   class SelectInputSchema < InputSchema
-    include Validators
+    include ChoiceValidators
+
+    attr_reader :choices
+
+    def initialize(definition)
+      @choices = definition['choices']
+
+      super(definition)
+
+      has_validchoice = @validators.any? do |validator|
+        validator.is_a? Validchoice
+      end
+
+      # because we need description for the error
+      raise InvalidSchema, "select type field requires validchoice validator" unless has_validchoice
+    end
   end
 
   class TableInputSchema < InputSchema

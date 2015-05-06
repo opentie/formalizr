@@ -45,6 +45,21 @@ module Formalizr
 
         expect(
           subject.query({
+            'type' => 'infix',
+            'operator' => 'exists_equal',
+            'left' => {
+              'type' => 'field',
+              'field' => 'name',
+            },
+            'right' => {
+              'type' => 'literal',
+              'literal' => ['あ', 'い']
+            },
+          })
+        ).to eq(false)
+        
+        expect(
+          subject.query({
             'type' => 'field',
             'field' => 'name',
           })

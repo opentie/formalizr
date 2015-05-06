@@ -160,7 +160,7 @@ module Formalizr
       left.any? { |left_elem| op_equal(left_elem, right) }
     end
 
-    def self.op_exists_equal(*args)
+    def self.op_exists_not_equal(*args)
       left, right, _ = array_in_left_hand(*args)
       left.any? { |left_elem| op_not_equal(left_elem, right) }
     end

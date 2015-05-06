@@ -50,6 +50,10 @@ module Formalizr
     include StringValidators
   end
 
+  class PasswordInputSchema < InputSchema
+    include StringValidators
+  end
+  
   class NumberInputSchema < InputSchema
     include IntegerValidators
 

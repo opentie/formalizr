@@ -99,7 +99,7 @@ module Formalizr
       end
 
       # because we need description for the error
-      raise InvalidSchema, "select type field requires validchoice validator" unless has_validchoice
+      raise InvalidSchema, "select or radio field requires validchoice validator" unless has_validchoice
     end    
   end
   

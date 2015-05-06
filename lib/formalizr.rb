@@ -80,11 +80,7 @@ module Formalizr
     include SetValidators
   end
 
-  class RadioInputSchema < InputSchema
-    include ChoiceValidators
-  end
-
-  class SelectInputSchema < InputSchema
+  class ChoiceInputSchema < InputSchema
     include ChoiceValidators
 
     attr_reader :choices
@@ -100,7 +96,13 @@ module Formalizr
 
       # because we need description for the error
       raise InvalidSchema, "select type field requires validchoice validator" unless has_validchoice
-    end
+    end    
+  end
+  
+  class RadioInputSchema < ChoiceInputSchema
+  end
+
+  class SelectInputSchema < ChoiceInputSchema
   end
 
   class TableInputSchema < InputSchema

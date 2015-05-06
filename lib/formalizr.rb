@@ -81,7 +81,7 @@ module Formalizr
   end
 
   class RadioInputSchema < InputSchema
-    include StringValidators
+    include ChoiceValidators
   end
 
   class SelectInputSchema < InputSchema

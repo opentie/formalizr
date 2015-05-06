@@ -4,7 +4,13 @@ require "formalizr/validators"
 require "formalizr/querier"
 
 module Formalizr
-  class InvalidInput < StandardError ; end
+  class InvalidInput < StandardError
+    attr_reader :validities
+    def initialize(message, validities = nil)
+      super(message)
+      @validities = validities
+    end
+  end
   class InvalidSchema < StandardError ; end
 
   class InputSchema
@@ -16,7 +22,6 @@ module Formalizr
       @title = definition['title']
       @note = definition['note']
       @default_value = definition['defaultValue'] || ''
-      # FIXME:
       @validators = (definition['validators'] || []).map do |validation|
         load_validation(validation)
       end
@@ -149,18 +154,23 @@ module Formalizr
     end
 
     def validate(input)
-      @input_schemata.map{ |schema|
+      validities = @input_schemata.map{ |schema|
         schema.validate(input[schema.name])
       }.to_h
+
+      [_valid?(validities), validities]
     end
 
     def valid?(input)
-      validities = validate(input)
-      _valid?(validities)
+      validity, _ = validate(input)
+      validity
     end
 
     def normalize(input)
-      raise InvalidInput unless valid?(input)
+      is_valid, validities = validate(input)
+      unless is_valid
+        raise InvalidInput.new('invalid input', validities)
+      end
       normalized_fields = @input_schemata.map do |schema|
         schema.normalize(input[schema.name])
       end

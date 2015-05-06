@@ -57,7 +57,7 @@ module Formalizr
                 { 'text' => 'baz' }
               ]
             })
-          ).to match({
+          ).to match([false, {
             'text' => {
               'validities' => [
                 { 'validity' => false, 'description' => 'hoge' },
@@ -99,13 +99,13 @@ module Formalizr
                 }
               ]
             }
-          })
+          }])
         end
 
         it 'returns true as validity if input is empty' do
           expect(
             subject.validate({ 'text' => '' })
-          ).to match({
+          ).to match([false, {
             'text' => {
               'validities' => [
                 { 'validity' => true, 'description' => 'hoge' },
@@ -119,7 +119,7 @@ module Formalizr
               ],
               'children' => []
             }
-          })
+          }])
         end
       end
 
@@ -140,6 +140,32 @@ module Formalizr
               { 'text' => 'hoge' },
             ],
           })
+        end
+
+        it 'normalize' do
+          expect{
+            subject.normalize({
+              'text' => 'foo',
+              'table' => [],
+            })
+          }.to raise_error do |err|
+            expect(err.is_a? InvalidInput).to eq(true)
+            expect(err.validities).to match({
+              'text' => {
+                'validities' => [
+                  { 'validity' => true, 'description' => 'hoge' },
+                  { 'validity' => true, 'description' => 'foo' }
+                ]
+              },
+              'table' => {
+                'validities' => [
+                  { 'validity' => false, 'description' => 'bar'},
+                  { 'validity' => true , 'description' => 'baz'}
+                ],
+                'children' => []
+              }
+            })
+          end
         end
       end
     end

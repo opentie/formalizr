@@ -140,7 +140,8 @@ module Formalizr
       def run(input)
         return true if input.length.zero?
         schema.choices.any? do |choice|
-          !choice['disabled'] && choice['value'] == input
+          value = choice.key?('value') ? choice['value'] : choice['label']
+          !choice['disabled'] && value == input
         end
       end
     end

@@ -91,6 +91,7 @@ module Formalizr::ChoiceValidators
       end
 
       it 'returns false when not matched' do
+        pending
         expect(subject.valid?('akari')).to eq(false)
         expect(subject.valid?('please select')).to eq(false)
       end
@@ -145,6 +146,52 @@ module Formalizr::IntegerValidators
       end
     end
 
+  end
+end
+
+module Formalizr::TableValidators
+  describe Formalizr::TableValidators do
+    describe Maxrows do
+      subject do
+        Maxrows.new(
+          Formalizr::TableInputSchema.load({
+            'name' => 'goods',
+            'title' => 'goods',
+            'type' => 'table',
+            'note' => '',
+            'columns' => [
+              {
+                'name' => 'name',
+                'type' => 'text',
+                'title' => 'hoge',
+              }
+            ]
+          }),
+          '3',
+          'max 3 rows')
+      end
+
+      it 'returns true when empty' do
+        expect(subject.valid?([])).to eq(true)
+      end      
+
+      it 'returns true when only 3 rows' do
+        expect(subject.valid?([
+          { 'name' => 'foo' },
+          { 'name' => 'bar' },
+          { 'name' => 'baz' },
+        ])).to eq(true)
+      end
+
+      it 'returns false when 4 rows' do
+        expect(subject.valid?([
+          { 'name' => 'foo' },
+          { 'name' => 'bar' },
+          { 'name' => 'baz' },
+          { 'name' => 'hoge' },
+        ])).to eq(false)
+      end
+    end
   end
 end
 

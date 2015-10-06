@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["kobahide789@gmail.com"]
 
   spec.summary       = %q{awesome form generator & validator}
-  spec.description   = gem.description
+  spec.description   = spec.description
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
